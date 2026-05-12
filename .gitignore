@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+webapp/node_modules/
+
+# Next.js
+webapp/.next/
+webapp/out/
+
+# Env (never commit secrets)
+.env
+.env.*
+!.env.example
+webapp/.env
+webapp/.env.*
+!webapp/.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# Misc
+*.local
