@@ -30,6 +30,9 @@ export default function MenuItemImage({
       src={urls[index]}
       alt={alt}
       className={className}
+      loading="lazy"
+      decoding="async"
+      referrerPolicy="no-referrer"
       onError={() => {
         setIndex((i) => Math.min(i + 1, urls.length - 1));
       }}

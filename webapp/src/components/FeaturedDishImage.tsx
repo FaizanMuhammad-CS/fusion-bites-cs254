@@ -30,6 +30,7 @@ export default function FeaturedDishImage(props: UrlProps | MenuProps) {
         alt={props.alt}
         className={props.className}
         loading="lazy"
+        decoding="async"
         referrerPolicy="no-referrer"
       />
     );

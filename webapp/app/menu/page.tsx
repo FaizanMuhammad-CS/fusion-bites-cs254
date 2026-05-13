@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { FiPlus, FiSearch, FiShoppingBag } from "react-icons/fi";
 
 import Footer from "@/src/components/Footer";
@@ -19,8 +19,23 @@ type MenuItem = {
   price: number;
 };
 
-export default function MenuPage() {
+function MenuPageFallback() {
+  return (
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col">
+      <Navbar />
+      <div className="flex-1 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin" />
+          <p className="text-gray-500 font-medium animate-pulse">Preparing the menu...</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MenuPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [items, setItems] = useState<MenuItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -46,6 +61,15 @@ export default function MenuPage() {
     return ["All", ...Array.from(unique)];
   }, [items]);
 
+  useEffect(() => {
+    if (items.length === 0) return;
+    const fromQuery = searchParams.get("category")?.trim();
+    if (!fromQuery) return;
+    if (categories.includes(fromQuery)) {
+      setSelectedCategory(fromQuery);
+    }
+  }, [searchParams, items, categories]);
+
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
       const matchesCategory =
@@ -63,30 +87,21 @@ export default function MenuPage() {
   );
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-[#F8F9FA] flex flex-col">
-        <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="w-12 h-12 border-4 border-orange-200 border-t-orange-500 rounded-full animate-spin"></div>
-            <p className="text-gray-500 font-medium animate-pulse">Preparing the menu...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <MenuPageFallback />;
   }
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] text-gray-900 font-sans selection:bg-orange-500 selection:text-white">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="relative mt-4 max-w-7xl mx-auto px-6">
         <div className="relative rounded-[2.5rem] overflow-hidden h-72 md:h-96 shadow-2xl">
           <img
-            src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=1800&q=80"
+            src="https://images.unsplash.com/photo-1482049016688-2d3e1b311543?auto=format&fit=crop&w=1600&q=75"
             alt="Fusion Bites menu hero"
             className="w-full h-full object-cover"
+            loading="eager"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 via-slate-900/60 to-transparent" />
           <div className="absolute inset-0 flex flex-col justify-center px-8 md:px-16">
@@ -103,7 +118,6 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* Menu Header & Search */}
       <div className="max-w-7xl mx-auto px-6 mt-12 mb-8">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
           <div>
@@ -112,7 +126,6 @@ export default function MenuPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
-            {/* Search Bar */}
             <div className="relative w-full sm:w-80">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <FiSearch className="text-gray-400" size={18} />
@@ -125,8 +138,7 @@ export default function MenuPage() {
                 className="w-full pl-11 pr-4 py-3 rounded-2xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all shadow-sm"
               />
             </div>
-            
-            {/* Cart Status Pill */}
+
             <div className="flex items-center gap-3 bg-white border border-gray-200 px-5 py-3 rounded-2xl shadow-sm w-full sm:w-auto">
               <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
                 <FiShoppingBag size={16} />
@@ -139,12 +151,12 @@ export default function MenuPage() {
         </div>
       </div>
 
-      {/* Category Filters */}
       <section className="max-w-7xl mx-auto px-6 mb-10">
         <div className="flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
           {categories.map((category) => (
             <button
               key={category}
+              type="button"
               onClick={() => setSelectedCategory(category)}
               className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
                 selectedCategory === category
@@ -158,7 +170,6 @@ export default function MenuPage() {
         </div>
       </section>
 
-      {/* Menu Grid */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
         {filteredItems.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -168,7 +179,6 @@ export default function MenuPage() {
                 className="bg-white rounded-[2rem] p-4 border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group flex flex-col"
               >
                 <div className="relative rounded-2xl overflow-hidden mb-5">
-                  {/* Using a predictable image URL structure for the demo */}
                   <MenuItemImage
                     category={item.category}
                     name={item.name}
@@ -180,7 +190,7 @@ export default function MenuPage() {
                     {item.category}
                   </span>
                 </div>
-                
+
                 <div className="px-2 flex flex-col flex-1">
                   <h3 className="font-bold text-gray-900 text-lg uppercase tracking-tight line-clamp-1">
                     {item.name}
@@ -191,12 +201,15 @@ export default function MenuPage() {
 
                   <div className="flex items-center justify-between border-t border-gray-100 pt-4 mt-auto">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Price</span>
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                        Price
+                      </span>
                       <span className="font-extrabold text-lg text-slate-900">
                         Rs {item.price}
                       </span>
                     </div>
                     <button
+                      type="button"
                       onClick={() => {
                         const user = getSessionUser();
                         if (!user || user.role !== "customer") {
@@ -229,8 +242,12 @@ export default function MenuPage() {
             <p className="text-gray-500 mt-2 max-w-md">
               {`We couldn't find any dishes matching "${search}" in the ${selectedCategory} category. Try adjusting your filters.`}
             </p>
-            <button 
-              onClick={() => { setSearch(""); setSelectedCategory("All"); }}
+            <button
+              type="button"
+              onClick={() => {
+                setSearch("");
+                setSelectedCategory("All");
+              }}
               className="mt-6 px-6 py-2.5 rounded-full bg-orange-50 text-orange-600 font-semibold hover:bg-orange-100 transition-colors"
             >
               Clear Filters
@@ -241,5 +258,13 @@ export default function MenuPage() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function MenuPage() {
+  return (
+    <Suspense fallback={<MenuPageFallback />}>
+      <MenuPageContent />
+    </Suspense>
   );
 }
