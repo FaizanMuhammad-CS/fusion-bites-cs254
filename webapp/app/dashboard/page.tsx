@@ -91,7 +91,7 @@ export default function DashboardPage() {
             </div>
             <h2 className="text-3xl font-bold text-slate-900 mb-2">Failed to load dashboard</h2>
             <p className="text-gray-500 max-w-md">
-              We couldn't connect to the analytics server. Please refresh the page or try again later.
+              We couldn&apos;t connect to the analytics server. Please refresh the page or try again later.
             </p>
           </div>
         </div>

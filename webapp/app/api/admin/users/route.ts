@@ -1,154 +1,93 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { ResultSetHeader, RowDataPacket } from "mysql2";
 
 import pool from "@/src/lib/db";
 
-type CreateUserBody = {
-  name?: string;
-  email?: string;
-  password?: string;
-  role?: "customer" | "admin";
-  phone?: string | null;
-  address?: string;
+type UserRow = RowDataPacket & {
+  user_id: number;
+  name: string;
+  email: string;
+  role: string;
+  phone: string | null;
+  address: string;
+  created_at: Date;
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const query = request.nextUrl.searchParams.get("query") ?? "";
-
-    const [rows] = await pool.query(
-      `
-      SELECT
-        user_id,
-        name,
-        email,
-        role
-      FROM Users
-      WHERE name LIKE ? OR email LIKE ?
-      ORDER BY role ASC, name ASC
-      `,
-      [`%${query}%`, `%${query}%`]
+    const [rows] = await pool.query<UserRow[]>(
+      `SELECT user_id, name, email, role, phone, address, created_at
+       FROM Users
+       ORDER BY created_at DESC`
     );
 
-    return NextResponse.json(rows);
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
-  }
-}
+    const data = rows.map((r) => ({
+      user_id: r.user_id,
+      name: r.name,
+      email: r.email,
+      role: r.role,
+      phone: r.phone,
+      address: r.address,
+      created_at:
+        r.created_at instanceof Date
+          ? r.created_at.toISOString()
+          : String(r.created_at),
+    }));
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = (await request.json()) as CreateUserBody;
-
-    const name = body.name?.trim();
-    const email = body.email?.trim().toLowerCase();
-    const password = body.password ?? "";
-    const role = body.role === "admin" ? "admin" : "customer";
-    const address = body.address?.trim();
-    const phoneRaw = body.phone?.trim();
-    const phone =
-      phoneRaw && phoneRaw.length > 0 ? phoneRaw : null;
-
-    if (!name || !email || !password || !address) {
-      return NextResponse.json(
-        { error: "name, email, password, and address are required" },
-        { status: 400 }
-      );
-    }
-
-    const [result]: any = await pool.query(
-      `
-      INSERT INTO Users (name, email, password, role, phone, address)
-      VALUES (?, ?, ?, ?, ?, ?)
-      `,
-      [name, email, password, role, phone, address]
-    );
-
-    return NextResponse.json({
-      success: true,
-      user_id: result.insertId as number,
-    });
-  } catch (error: unknown) {
-    const err = error as { code?: string };
-    if (err.code === "ER_DUP_ENTRY") {
-      return NextResponse.json(
-        { error: "Email or phone already exists" },
-        { status: 409 }
-      );
-    }
-    console.error(error);
+    return NextResponse.json(data);
+  } catch (e) {
+    console.error(e);
     return NextResponse.json(
-      { error: "Failed to create user" },
+      { error: "Failed to load users" },
       { status: 500 }
     );
   }
 }
 
-export async function DELETE(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const userIdParam = request.nextUrl.searchParams.get("user_id");
-    const actorIdParam =
-      request.nextUrl.searchParams.get("actor_user_id");
+    const body = (await req.json()) as {
+      name?: string;
+      email?: string;
+      password?: string;
+      role?: string;
+      phone?: string | null;
+      address?: string;
+    };
 
-    const userId = userIdParam ? Number(userIdParam) : NaN;
-    const actorId = actorIdParam ? Number(actorIdParam) : NaN;
+    const name = body.name?.trim() ?? "";
+    const email = body.email?.trim().toLowerCase() ?? "";
+    const password = body.password ?? "";
+    const role = body.role === "admin" ? "admin" : "customer";
+    const address = body.address?.trim() ?? "";
+    const phoneRaw = body.phone?.trim();
+    const phone = phoneRaw ? phoneRaw : null;
 
-    if (!Number.isFinite(userId) || userId < 1) {
+    if (!name || !email || !password || !address) {
       return NextResponse.json(
-        { error: "user_id query parameter is required" },
+        { error: "Name, email, password, and address are required." },
         { status: 400 }
       );
     }
 
-    if (Number.isFinite(actorId) && actorId === userId) {
+    const [res] = await pool.query<ResultSetHeader>(
+      `INSERT INTO Users (name, email, password, role, phone, address)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, email, password, role, phone, address]
+    );
+
+    return NextResponse.json({ user_id: res.insertId });
+  } catch (e: unknown) {
+    const err = e as { code?: string };
+    if (err.code === "ER_DUP_ENTRY") {
       return NextResponse.json(
-        { error: "You cannot delete your own account" },
-        { status: 400 }
+        { error: "Email or phone already in use." },
+        { status: 409 }
       );
     }
-
-    const [targetRows]: any = await pool.query(
-      `
-      SELECT role FROM Users WHERE user_id = ? LIMIT 1
-      `,
-      [userId]
-    );
-
-    if (!targetRows.length) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    if (targetRows[0].role === "admin") {
-      const [countRows]: any = await pool.query(
-        `
-        SELECT COUNT(*) AS admin_count FROM Users WHERE role = 'admin'
-        `
-      );
-      const adminCount = Number(countRows[0]?.admin_count ?? 0);
-      if (adminCount <= 1) {
-        return NextResponse.json(
-          { error: "Cannot delete the last admin account" },
-          { status: 400 }
-        );
-      }
-    }
-
-    const [deleteResult]: any = await pool.query(
-      `
-      DELETE FROM Users WHERE user_id = ?
-      `,
-      [userId]
-    );
-
-    if (deleteResult.affectedRows === 0) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error(error);
+    console.error(e);
     return NextResponse.json(
-      { error: "Failed to delete user" },
+      { error: "Failed to create user." },
       { status: 500 }
     );
   }

@@ -85,7 +85,7 @@ export default function HomePage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="max-w-2xl">
             <h1 className="text-5xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight text-slate-900">
-              "Exploring the Delights of <span className="text-orange-500">Fusion Cuisine</span>"
+              &ldquo;Exploring the Delights of <span className="text-orange-500">Fusion Cuisine</span>&rdquo;
             </h1>
             <p className="mt-6 text-lg text-gray-500 leading-relaxed max-w-lg">
               Experience a blend of vibrant flavors, modern culinary techniques, and a seamless digital ordering platform built for food lovers.
@@ -170,7 +170,7 @@ export default function HomePage() {
       {/* Today's Menu Grid */}
       <section className="max-w-7xl mx-auto px-6 pb-24">
         <div className="flex items-end justify-between mb-8">
-          <h2 className="text-3xl font-bold text-slate-900">Today's Menu</h2>
+          <h2 className="text-3xl font-bold text-slate-900">Today&apos;s Menu</h2>
           <Link href="/menu" className="text-sm font-bold text-orange-500 hover:text-orange-600 transition-colors">
             View all dishes
           </Link>
@@ -235,7 +235,7 @@ export default function HomePage() {
           <div className="max-w-xl">
             <h2 className="text-3xl font-bold text-slate-900">Want to reserve a table?</h2>
             <p className="text-gray-500 mt-4 text-sm leading-relaxed">
-              Remember that reservation policies can vary. It's important to read and understand our terms before making a reservation to ensure the best dining experience.
+              Remember that reservation policies can vary. It&apos;s important to read and understand our terms before making a reservation to ensure the best dining experience.
             </p>
           </div>
           <Link 

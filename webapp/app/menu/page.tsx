@@ -227,7 +227,7 @@ export default function MenuPage() {
             </div>
             <h3 className="text-xl font-bold text-slate-900">No dishes found</h3>
             <p className="text-gray-500 mt-2 max-w-md">
-              We couldn't find any dishes matching "{search}" in the {selectedCategory} category. Try adjusting your filters.
+              {`We couldn't find any dishes matching "${search}" in the ${selectedCategory} category. Try adjusting your filters.`}
             </p>
             <button 
               onClick={() => { setSearch(""); setSelectedCategory("All"); }}

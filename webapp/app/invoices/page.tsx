@@ -99,7 +99,7 @@ export default function InvoicesPage() {
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">No Invoices Found</h3>
                 <p className="text-gray-500 max-w-sm">
-                  You haven't placed any orders yet. Once you do, your invoices will securely appear here.
+                  You haven&apos;t placed any orders yet. Once you do, your invoices will securely appear here.
                 </p>
               </div>
 

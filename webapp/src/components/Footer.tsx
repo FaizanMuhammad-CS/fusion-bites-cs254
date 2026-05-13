@@ -1,8 +1,5 @@
 import Link from "next/link";
 import { FiFacebook, FiInstagram, FiMail, FiMapPin, FiPhone } from "react-icons/fi";
-import { FaTiktok } from "react-icons/fa6"; // If fa6 isn't available, standard text or Fi icons work, but assuming standard react-icons package. 
-// Fallback if FaTiktok fails: just use text, but standard react-icons includes it. Let's use standard text for TikTok to be safe if package is limited, or stick to Fi.
-// Actually, let's just use standard Fi icons and text to be perfectly safe with your current imports.
 
 export default function Footer() {
   return (

@@ -27,8 +27,10 @@ export default function AdminSidebar() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    setUser(getSessionUser());
+    queueMicrotask(() => {
+      setMounted(true);
+      setUser(getSessionUser());
+    });
   }, []);
 
   // Hydration safety and role protection
@@ -59,7 +61,10 @@ export default function AdminSidebar() {
       {/* Navigation Links */}
       <nav className="space-y-2 flex-1">
         {adminLinks.map((link) => {
-          const isActive = pathname === link.href;
+          const isActive =
+            link.href === "/admin"
+              ? pathname === "/admin" || pathname === "/admin/"
+              : pathname === link.href;
           const Icon = link.icon;
 
           return (

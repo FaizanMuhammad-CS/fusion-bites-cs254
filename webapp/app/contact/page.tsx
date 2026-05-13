@@ -20,7 +20,7 @@ export default function ContactPage() {
               Get In Touch
             </p>
             <h1 className="text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight mb-6 tracking-tight">
-              We'd love to hear from you.
+              We&apos;d love to hear from you.
             </h1>
             <p className="text-gray-500 text-lg mb-10 leading-relaxed max-w-lg">
               Whether you have a question about our menu, want to make a large reservation, or just want to say hi, our team is ready to help.
@@ -78,7 +78,7 @@ export default function ContactPage() {
 
             <div className="bg-white rounded-[2.5rem] p-8 sm:p-10 border border-gray-100 shadow-xl shadow-slate-200/50 relative z-10">
               <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Send a Message</h2>
-              <p className="text-gray-500 mb-8">Fill out the form below and we'll get back to you shortly.</p>
+              <p className="text-gray-500 mb-8">Fill out the form below and we&apos;ll get back to you shortly.</p>
 
               <form className="space-y-5">
                 {/* Name Input */}

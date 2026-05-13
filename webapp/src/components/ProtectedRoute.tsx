@@ -23,19 +23,22 @@ export default function ProtectedRoute({
   const roleKey = allowedRoles.join(",");
 
   useEffect(() => {
-    const user = getSessionUser();
+    queueMicrotask(() => {
+      const user = getSessionUser();
 
-    if (!user) {
-      router.replace("/login");
-      return;
-    }
+      if (!user) {
+        router.replace("/login");
+        return;
+      }
 
-    if (!allowedRoles.includes(user.role as "customer" | "admin")) {
-      router.replace(user.role === "admin" ? "/admin" : "/menu");
-      return;
-    }
+      if (!allowedRoles.includes(user.role as "customer" | "admin")) {
+        router.replace(user.role === "admin" ? "/admin" : "/menu");
+        return;
+      }
 
-    setAuthorized(true);
+      setAuthorized(true);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- allowedRoles captured in roleKey; inline arrays would thrash deps.
   }, [pathname, roleKey, router]);
 
   // Premium loading state while verifying access

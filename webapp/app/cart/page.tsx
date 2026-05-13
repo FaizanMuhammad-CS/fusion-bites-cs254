@@ -35,7 +35,7 @@ export default function CartPage() {
               Your Cart is Empty
             </h1>
             <p className="text-gray-500 text-lg mb-10 text-center max-w-md leading-relaxed">
-              Looks like you haven't added any of our delicious dishes to your cart yet.
+              Looks like you haven&apos;t added any of our delicious dishes to your cart yet.
             </p>
             <Link
               href="/menu"

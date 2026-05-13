@@ -127,7 +127,7 @@ export default function OrdersPage() {
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">No Orders Yet</h3>
                 <p className="text-gray-500 max-w-sm">
-                  Looks like you haven't placed any orders. Head over to the menu to discover delicious meals!
+                  Looks like you haven&apos;t placed any orders. Head over to the menu to discover delicious meals!
                 </p>
               </div>
 

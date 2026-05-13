@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import type { IconType } from "react-icons";
 import { 
   FiUser, 
   FiMail, 
@@ -198,7 +199,7 @@ export default function ProfilePage() {
 // SUB-COMPONENTS
 // --------------------------------------------------------
 
-function InfoRow({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
+function InfoRow({ icon: Icon, label, value }: { icon: IconType; label: string; value: string }) {
   return (
     <div className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors">
       <div className="w-12 h-12 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">

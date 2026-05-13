@@ -45,8 +45,7 @@ export function menuImageCandidates(
   const folderSeg = encodeURIComponent(folder);
   const encodedName = encodeURIComponent(name);
   const slug = nameToSlug(name);
-  /** Try webp early — several assets are .webp only (fewer 404s in dev logs). */
-  const exts = ["jpg", "webp", "jpeg", "png"] as const;
+  const exts = ["jpg", "jpeg", "png", "webp"] as const;
   const base = `/photos/${folderSeg}`;
   const urls: string[] = [];
 

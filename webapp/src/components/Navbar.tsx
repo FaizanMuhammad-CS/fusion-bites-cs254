@@ -24,13 +24,15 @@ export default function Navbar() {
   const { cart } = useCart();
 
   useEffect(() => {
-    setMounted(true);
-    setUser(getSessionUser());
+    queueMicrotask(() => {
+      setMounted(true);
+      setUser(getSessionUser());
+    });
   }, []);
 
-  // Hide the public navbar only on admin routes.
-  // Admins can still browse public pages without losing navigation.
-  if (pathname?.startsWith("/admin")) {
+  // Hide top bar only on /admin/* where AdminSidebar is the primary chrome.
+  // Admins still need the navbar on /dashboard, /menu, etc.
+  if (mounted && user?.role === "admin" && pathname.startsWith("/admin")) {
     return null;
   }
 

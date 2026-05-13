@@ -1,50 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { RowDataPacket } from "mysql2";
 
 import pool from "@/src/lib/db";
 
-export async function GET(request: NextRequest) {
-  try {
-    const userId = request.nextUrl.searchParams.get("user_id");
+type ProfileRow = RowDataPacket & {
+  user_id: number;
+  name: string;
+  email: string;
+  role: string;
+  totalOrders: number;
+  totalSpent: string | number;
+};
 
-    if (!userId) {
-      return NextResponse.json({ error: "user_id is required" }, { status: 400 });
+export async function GET(req: NextRequest) {
+  try {
+    const userId = Number(req.nextUrl.searchParams.get("user_id"));
+    if (!Number.isFinite(userId) || userId <= 0) {
+      return NextResponse.json({ error: "Invalid user_id" }, { status: 400 });
     }
 
-    const [profileRows]: any = await pool.query(
-      `
-      SELECT
-        user_id,
-        name,
-        email,
-        role
-      FROM Users
-      WHERE user_id = ?
-      LIMIT 1
-      `,
-      [Number(userId)]
+    const [rows] = await pool.query<ProfileRow[]>(
+      `SELECT u.user_id,
+              u.name,
+              u.email,
+              u.role,
+              COUNT(DISTINCT o.order_id) AS totalOrders,
+              COALESCE(SUM(o.total_amount), 0) AS totalSpent
+       FROM Users u
+       LEFT JOIN Orders o ON o.user_id = u.user_id
+       WHERE u.user_id = ?
+       GROUP BY u.user_id, u.name, u.email, u.role`,
+      [userId]
     );
 
-    if (!profileRows.length) {
+    const row = rows[0];
+    if (!row) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const [statsRows]: any = await pool.query(
-      `
-      SELECT
-        COUNT(*) AS totalOrders,
-        IFNULL(SUM(total_amount), 0) AS totalSpent
-      FROM Orders
-      WHERE user_id = ?
-      `,
-      [Number(userId)]
-    );
-
     return NextResponse.json({
-      ...profileRows[0],
-      ...statsRows[0],
+      user_id: row.user_id,
+      name: row.name,
+      email: row.email,
+      role: row.role,
+      totalOrders: Number(row.totalOrders),
+      totalSpent: Number(row.totalSpent),
     });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Failed to fetch profile data" }, { status: 500 });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json(
+      { error: "Failed to load profile" },
+      { status: 500 }
+    );
   }
 }

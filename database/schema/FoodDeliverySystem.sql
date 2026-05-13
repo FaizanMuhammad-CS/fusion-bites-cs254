@@ -382,7 +382,7 @@ FROM Users;
 
 SELECT *
 FROM Orders
-WHERE order_id = 504;
+WHERE order_id = 503;
 
 SELECT COUNT(*) AS total_order_items
 FROM OrderItems;
