@@ -60,7 +60,7 @@ function poolOptionsFromDiscreteEnv(): PoolOptions {
   const host = process.env.MYSQL_HOST ?? "localhost";
   const port = Number(process.env.MYSQL_PORT) || 3306;
   const user = process.env.MYSQL_USER ?? "root";
-  const password = process.env.MYSQL_PASSWORD ?? "@@faizan6767";
+  const password = process.env.MYSQL_PASSWORD ?? "";
   const database = process.env.MYSQL_DATABASE ?? "ProjectDB";
 
   let ssl: SslOptions | undefined = parseSsl();
