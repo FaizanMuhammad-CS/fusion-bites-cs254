@@ -172,7 +172,16 @@ export default function LoginPage() {
           </form>
 
           {/* Footer Link */}
-          <div className="mt-8 pt-8 border-t border-gray-100 text-center">
+          <div className="mt-8 pt-8 border-t border-gray-100 text-center space-y-3">
+            <p className="text-sm text-gray-500">
+              New here?{" "}
+              <Link
+                href="/register"
+                className="text-orange-500 font-bold hover:text-orange-600 transition-colors underline decoration-orange-500/30 underline-offset-4"
+              >
+                Create an account
+              </Link>
+            </p>
             <p className="text-sm text-gray-500">
               Just want to look around?{" "}
               <Link href="/menu" className="text-orange-500 font-bold hover:text-orange-600 transition-colors underline decoration-orange-500/30 underline-offset-4">

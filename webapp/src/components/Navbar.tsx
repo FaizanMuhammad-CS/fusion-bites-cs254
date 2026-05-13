@@ -106,13 +106,21 @@ export default function Navbar() {
               </button>
             </div>
           ) : (
-            <Link
-              href="/login"
-              className="hidden md:flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-gray-900 text-white hover:bg-orange-500 transition-colors shadow-md hover:shadow-orange-500/25"
-            >
-              <FiUser size={16} />
-              Sign In
-            </Link>
+            <div className="hidden md:flex items-center gap-2">
+              <Link
+                href="/register"
+                className="px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 hover:text-orange-600 border border-gray-200 hover:border-orange-200 bg-white transition-colors"
+              >
+                Create account
+              </Link>
+              <Link
+                href="/login"
+                className="flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold bg-gray-900 text-white hover:bg-orange-500 transition-colors shadow-md hover:shadow-orange-500/25"
+              >
+                <FiUser size={16} />
+                Sign In
+              </Link>
+            </div>
           )}
 
           {/* Mobile Menu Toggle */}
@@ -166,13 +174,22 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link
-              href="/login"
-              onClick={() => setMenuOpen(false)}
-              className="px-4 py-3 rounded-2xl text-sm font-semibold bg-gray-900 text-white text-center mt-2 hover:bg-orange-500 transition-colors"
-            >
-              Sign In to Order
-            </Link>
+            <>
+              <Link
+                href="/register"
+                onClick={() => setMenuOpen(false)}
+                className="px-4 py-3 rounded-2xl text-sm font-semibold text-gray-700 hover:bg-gray-50 border border-gray-200 text-center"
+              >
+                Create account
+              </Link>
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="px-4 py-3 rounded-2xl text-sm font-semibold bg-gray-900 text-white text-center mt-1 hover:bg-orange-500 transition-colors"
+              >
+                Sign In to Order
+              </Link>
+            </>
           )}
         </div>
       )}

@@ -90,12 +90,19 @@ export default function HomePage() {
             <p className="mt-6 text-lg text-gray-500 leading-relaxed max-w-lg">
               Experience a blend of vibrant flavors, modern culinary techniques, and a seamless digital ordering platform built for food lovers.
             </p>
-            <div className="mt-10 flex items-center gap-4">
+            <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 href="/menu"
                 className="px-8 py-4 rounded-full bg-orange-500 text-white font-bold hover:bg-orange-600 hover:shadow-xl hover:shadow-orange-500/30 transition-all duration-300 flex items-center gap-2"
               >
                 Explore Menu <FiArrowRight />
+              </Link>
+              <Link
+                href="/register"
+                className="px-8 py-4 rounded-full bg-white text-slate-900 font-bold border-2 border-slate-200 hover:border-orange-500 hover:text-orange-600 transition-all duration-300 flex items-center gap-2"
+              >
+                <FiPlus className="text-orange-500" />
+                Create account
               </Link>
             </div>
           </div>

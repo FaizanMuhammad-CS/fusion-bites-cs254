@@ -375,14 +375,15 @@ VALUES (
 -- ANALYTICS TEST QUERIES
 
 SELECT *
-FROM users;
+FROM Users
+
 
 SELECT COUNT(*) AS total_users
 FROM Users;
 
 SELECT *
 FROM Orders
-WHERE order_id = 503;
+WHERE order_id = 502;
 
 SELECT COUNT(*) AS total_order_items
 FROM OrderItems;
