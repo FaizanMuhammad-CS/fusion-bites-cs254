@@ -2,76 +2,71 @@ import mysql from "mysql2/promise";
 import type { PoolOptions, SslOptions } from "mysql2";
 
 /**
- * Builds mysql2 pool options for:
- * - **Railway / cloud:** set `DATABASE_URL`, `MYSQL_URL`, or `MYSQL_PUBLIC_URL` to a `mysql://` or `mysqls://` URL,
- *   or set discrete `MYSQL_HOST`, `MYSQL_PORT`, `MYSQL_USER`, `MYSQL_PASSWORD`, `MYSQL_DATABASE`.
- * - **Local:** omit URL vars; defaults match a typical XAMPP/WAMP-style install (override with `.env.local`).
+ * MySQL pool for serverless (Vercel) + Railway.
  *
- * TLS: set `MYSQL_SSL=true` on Vercel when your provider requires encrypted connections (often needed for Railway TCP).
+ * **Required env (Railway / Vercel naming — no underscore after MYSQL):**
+ * `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`
+ *
+ * **TLS:** Remote hosts use `ssl: { rejectUnauthorized: false }` (Railway TCP proxy).
+ * For local MySQL without TLS, set `MYSQL_SSL=false`.
+ *
+ * **Optional:** `MYSQL_CONNECTION_LIMIT` (default `10`).
  */
 
-function parseSsl(): SslOptions | undefined {
-  const v = process.env.MYSQL_SSL?.trim().toLowerCase();
-  if (v === "true" || v === "1" || v === "require") {
-    return { rejectUnauthorized: false };
-  }
-  if (v === "verify" || v === "verify-full") {
-    return {};
-  }
-  return undefined;
+const RAILWAY_SSL: SslOptions = { rejectUnauthorized: false };
+
+function isLoopbackHost(host: string): boolean {
+  const h = host.trim().toLowerCase();
+  return h === "localhost" || h === "127.0.0.1" || h === "::1";
 }
 
-function poolOptionsFromMysqlUrl(raw: string): PoolOptions {
-  const trimmed = raw.trim();
-  const url = new URL(trimmed.replace(/^jdbc:/i, ""));
-  if (url.protocol !== "mysql:" && url.protocol !== "mysqls:") {
+function resolveSsl(host: string): SslOptions | undefined {
+  const flag = process.env.MYSQL_SSL?.trim().toLowerCase();
+  if (flag === "false" || flag === "0" || flag === "off") {
+    return undefined;
+  }
+  if (flag === "true" || flag === "1" || flag === "require") {
+    return RAILWAY_SSL;
+  }
+  // Default: TLS for non-loopback (Railway / cloud); omit for typical local MySQL
+  if (isLoopbackHost(host)) {
+    return undefined;
+  }
+  return RAILWAY_SSL;
+}
+
+function requireEnv(name: string): string {
+  const raw = process.env[name];
+  if (raw === undefined || raw === null) {
     throw new Error(
-      `Unsupported MySQL URL protocol: ${url.protocol} (expected mysql:// or mysqls://)`
+      `Missing required environment variable ${name}. Set MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, and MYSQLDATABASE (Railway names on Vercel).`
     );
   }
-  const database = url.pathname.replace(/^\//, "").split("?")[0];
-  if (!database) {
-    throw new Error("MySQL URL must include a database name, e.g. mysql://user:pass@host:3306/ProjectDB");
+  const v = raw.trim();
+  if (!v) {
+    throw new Error(
+      `Environment variable ${name} is set but empty. Railway/Vercel must define MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, and MYSQLDATABASE.`
+    );
   }
-  const explicitSsl = parseSsl();
-  const ssl: SslOptions | undefined =
-    explicitSsl !== undefined
-      ? explicitSsl
-      : url.protocol === "mysqls:"
-        ? { rejectUnauthorized: false }
-        : undefined;
-
-  const base: PoolOptions = {
-    host: url.hostname,
-    port: url.port ? Number(url.port) : 3306,
-    user: decodeURIComponent(url.username),
-    password: decodeURIComponent(url.password),
-    database,
-    waitForConnections: true,
-    connectionLimit: Number(process.env.MYSQL_CONNECTION_LIMIT) || 10,
-  };
-  if (ssl !== undefined) {
-    base.ssl = ssl;
-  }
-  return base;
+  return v;
 }
 
-function poolOptionsFromDiscreteEnv(): PoolOptions {
-  const host = process.env.MYSQL_HOST ?? "localhost";
-  const port = Number(process.env.MYSQL_PORT) || 3306;
-  const user = process.env.MYSQL_USER ?? "root";
-  const password = process.env.MYSQL_PASSWORD ?? "@@faizan6767";
-  const database = process.env.MYSQL_DATABASE ?? "ProjectDB";
-
-  let ssl: SslOptions | undefined = parseSsl();
-  if (
-    !ssl &&
-    (host.includes("railway.app") ||
-      host.includes("rlwy.net") ||
-      host.endsWith(".proxy.rlwy.net"))
-  ) {
-    ssl = { rejectUnauthorized: false };
+function buildPoolOptions(): PoolOptions {
+  const host = requireEnv("MYSQLHOST");
+  const portRaw = requireEnv("MYSQLPORT");
+  const port = Number(portRaw);
+  if (!Number.isFinite(port) || port <= 0 || port > 65535) {
+    throw new Error(`MYSQLPORT must be a valid TCP port (got "${portRaw}")`);
   }
+
+  const user = requireEnv("MYSQLUSER");
+  const database = requireEnv("MYSQLDATABASE");
+  const password =
+    process.env.MYSQLPASSWORD === undefined || process.env.MYSQLPASSWORD === null
+      ? ""
+      : String(process.env.MYSQLPASSWORD);
+
+  const ssl = resolveSsl(host);
 
   const base: PoolOptions = {
     host,
@@ -86,23 +81,6 @@ function poolOptionsFromDiscreteEnv(): PoolOptions {
     base.ssl = ssl;
   }
   return base;
-}
-
-function buildPoolOptions(): PoolOptions {
-  const urlCandidate =
-    process.env.DATABASE_URL?.trim() ||
-    process.env.MYSQL_URL?.trim() ||
-    process.env.MYSQL_PUBLIC_URL?.trim() ||
-    "";
-
-  if (
-    urlCandidate.startsWith("mysql://") ||
-    urlCandidate.startsWith("mysqls://")
-  ) {
-    return poolOptionsFromMysqlUrl(urlCandidate);
-  }
-
-  return poolOptionsFromDiscreteEnv();
 }
 
 const pool = mysql.createPool(buildPoolOptions());

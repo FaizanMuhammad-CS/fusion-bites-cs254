@@ -1,0 +1,130 @@
+﻿node.exe : npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm 
+help npmrc` for supported config options.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm warn Unknow...config options.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+> webapp@0.1.0 lint
+> eslint
+
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\app\about\page.tsx
+  72:15  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\app\admin\users\page.tsx
+  69:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\app\admin\users\page.tsx:69:5
+  67 |
+  68 |   useEffect(() => {
+> 69 |     loadUsers();
+     |     ^^^^^^^^^ Avoid calling setState() directly within an effect
+  70 |   }, [loadUsers]);
+  71 |
+  72 |   function openCreate() {  react-hooks/set-state-in-effect
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\app\login\page.tsx
+  74:9  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\app\menu\page.tsx
+  86:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\app\page.tsx
+  107:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  115:19  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\src\components\FeaturedDishImage.tsx
+  28:7  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\src\components\MenuItemImage.tsx
+  29:5  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+Γ£û 8 problems (1 error, 7 warnings)
+
+node.exe : npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm 
+help npmrc` for supported config options.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm warn Unknow...config options.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+node.exe : npm warn Unknown env config "devdir". This will stop working in the next major version of npm. See `npm 
+help npmrc` for supported config options.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" "C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (npm warn Unknow...config options.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+> webapp@0.1.0 build
+> next build
+
+ΓÜá Warning: Next.js inferred your workspace root, but it may not be correct.
+ We detected multiple lockfiles and selected the directory of C:\Users\Faizan\Documents\DBS\DBS - 
+PROJ\package-lock.json as the root directory.
+ To silence this warning, set `turbopack.root` in your Next.js config, or consider removing one of the lockfiles if 
+it's not needed.
+   See https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\Faizan\Documents\DBS\DBS - PROJ\webapp\package-lock.json
+
+Γû▓ Next.js 16.2.5 (Turbopack)
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 29.2s
+  Running TypeScript ...
+  Finished TypeScript in 10.0s ...
+  Collecting page data using 7 workers ...
+  Generating static pages using 7 workers (0/28) ...
+  Generating static pages using 7 workers (7/28) 
+  Generating static pages using 7 workers (14/28) 
+  Generating static pages using 7 workers (21/28) 
+Γ£ô Generating static pages using 7 workers (28/28) in 2.4s
+  Finalizing page optimization ...
+
+Route (app)
+Γöî Γùï /
+Γö£ Γùï /_not-found
+Γö£ Γùï /about
+Γö£ Γùï /admin
+Γö£ Γùï /admin/orders
+Γö£ Γùï /admin/payments
+Γö£ Γùï /admin/users
+Γö£ ╞Æ /api/admin/orders
+Γö£ ╞Æ /api/admin/orders/[id]
+Γö£ ╞Æ /api/admin/payments
+Γö£ ╞Æ /api/admin/stats
+Γö£ ╞Æ /api/admin/users
+Γö£ ╞Æ /api/admin/users/[id]
+Γö£ ╞Æ /api/auth/login
+Γö£ ╞Æ /api/dashboard/stats
+Γö£ ╞Æ /api/invoices
+Γö£ ╞Æ /api/menu
+Γö£ ╞Æ /api/orders
+Γö£ ╞Æ /api/orders/history
+Γö£ ╞Æ /api/users/profile
+Γö£ Γùï /cart
+Γö£ Γùï /checkout
+Γö£ Γùï /contact
+Γö£ Γùï /dashboard
+Γö£ Γùï /invoices
+Γö£ Γùï /login
+Γö£ Γùï /menu
+Γö£ Γùï /orders
+Γöö Γùï /profile
+
+
+Γùï  (Static)   prerendered as static content
+╞Æ  (Dynamic)  server-rendered on demand
+
