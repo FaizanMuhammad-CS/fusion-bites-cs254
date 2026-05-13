@@ -14,7 +14,7 @@ type UserRow = RowDataPacket & {
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as { email?: string; password?: string };
-    const email = body.email?.trim();
+    const email = body.email?.trim().toLowerCase();
     const password = body.password ?? "";
 
     if (!email || !password) {
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     }
 
     const [rows] = await pool.query<UserRow[]>(
-      `SELECT user_id, name, email, role, password FROM Users WHERE email = ? LIMIT 1`,
+      `SELECT user_id, name, email, role, password FROM Users WHERE LOWER(email) = ? LIMIT 1`,
       [email]
     );
 
