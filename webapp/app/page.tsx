@@ -4,6 +4,10 @@ import { FiArrowRight, FiPlus } from "react-icons/fi";
 import FeaturedDishImage from "@/src/components/FeaturedDishImage";
 import Footer from "@/src/components/Footer";
 import Navbar from "@/src/components/Navbar";
+import {
+  HOME_MENU_CATEGORY_CHIPS,
+  menuCategoryHref,
+} from "@/src/lib/homeMenuCategories";
 
 type FeaturedItem =
   | {
@@ -72,8 +76,6 @@ const featuredItems: FeaturedItem[] = [
     },
   },
 ];
-
-const categories = ["All", "Noodle Dishes", "Rice Dishes", "Rolls and Wraps", "Seafood Dishes", "Beverages"];
 
 export default function HomePage() {
   return (
@@ -159,17 +161,18 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-6 pb-8">
         <h2 className="text-3xl font-bold text-slate-900 mb-8">Top Categories</h2>
         <div className="flex gap-3 overflow-x-auto pb-4 hide-scrollbar">
-          {categories.map((cat, index) => (
-            <button
+          {HOME_MENU_CATEGORY_CHIPS.map((cat) => (
+            <Link
               key={cat}
-              className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
-                index === 0
-                  ? "bg-slate-900 text-white shadow-md"
+              href={menuCategoryHref(cat)}
+              className={`whitespace-nowrap px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 inline-flex items-center justify-center ${
+                cat === "All"
+                  ? "bg-slate-900 text-white shadow-md hover:bg-slate-800"
                   : "bg-white text-gray-600 border border-gray-200 hover:border-orange-500 hover:text-orange-500"
               }`}
             >
               {cat}
-            </button>
+            </Link>
           ))}
         </div>
       </section>
